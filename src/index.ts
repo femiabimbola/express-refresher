@@ -29,6 +29,8 @@ const users: User[] = [
 
 // Params tutorial
 app.get("/api/users/:id", (req: Request, res: Response) => {
+  // const {params: {id}} = req;
+
   const parseId = parseInt(req.params.id);
   if (isNaN(parseId)) return res.status(400).send({msg: "Invalid Params"});
 
@@ -51,18 +53,33 @@ app.get("/api/users", (req: Request, res: Response) => {
 });
 
 // Post request
-app.post("/api/users", (req: Request, res: Response) => {
+app.post("/api/users/:id", (req: Request, res: Response) => {
   const {body} = req;
-
-  const newUser = {id: users[users.length - 1].id + 1, ...body};
-  users.push(...users, newUser);
+  const parseId = parseInt(req.params.id);
   return res.status(201).send({msg: users});
 });
 
 // PUT query
 app.put("/api/users/:id", (req: Request, res: Response) => {
+  const {
+    body,
+    params: {id},
+  } = req;
+  const parseId = parseInt(id);
+  if (isNaN(parseId)) return res.status(400).send({msg: "Bad request"});
+
+  const findUserIndex = users.findIndex((user) => user.id === parseId);
+  if (findUserIndex === -1) return res.status(404).send({msg: "Not found"});
+
+  users[findUserIndex] = {id: parseId, ...body};
+  return res.sendStatus(200).send({msg: "done"});
+});
+
+// Patch query
+app.patch("/api/users", (req: Request, res: Response) => {
   const {body} = req;
-  return res.status(200).send({msg: "done"});
+
+  return res.status(201).send({msg: users});
 });
 
 app.listen(PORT, () => console.log(`Running on port ${PORT}`));
