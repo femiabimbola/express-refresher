@@ -10,7 +10,13 @@ app.get("/", (req: Request, res: Response) => {
   res.status(200).send({msg: "Express with a TypeScript Server"});
 });
 
-const users = [
+interface User {
+  id: number;
+  name: string;
+  display: string;
+}
+
+const users: User[] = [
   {id: 1, name: "Tush", display: "tushy1"},
   {id: 2, name: "Josh", display: "Josshy"},
   {id: 3, name: "Michael", display: "Mich43"},
@@ -33,11 +39,30 @@ app.get("/api/users/:id", (req: Request, res: Response) => {
 
 // Query
 app.get("/api/users", (req: Request, res: Response) => {
-  const {
-    query: {filter, value},
-  } = req;
-  if (!filter && !value) return res.status(200).send(users);
-  res.status(200).send(users);
+  // const { query: {qfilter, qvalue}} = req;
+  const {qfilter, qvalue} = req.query;
+
+  // const usersFilter = users.filter((user: User) =>
+  //   user[qfilter].includes(qvalue)
+  // );
+
+  // if (qfilter && qvalue) return res.status(200).send(usersFilter);
+  return res.status(200).send(users);
+});
+
+// Post request
+app.post("/api/users", (req: Request, res: Response) => {
+  const {body} = req;
+
+  const newUser = {id: users[users.length - 1].id + 1, ...body};
+  users.push(...users, newUser);
+  return res.status(201).send({msg: users});
+});
+
+// PUT query
+app.put("/api/users/:id", (req: Request, res: Response) => {
+  const {body} = req;
+  return res.status(200).send({msg: "done"});
 });
 
 app.listen(PORT, () => console.log(`Running on port ${PORT}`));
