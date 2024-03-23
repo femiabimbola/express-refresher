@@ -1,4 +1,4 @@
-import express, {Request, Response} from "express";
+import express, {Request, Response, NextFunction} from "express";
 
 const app = express();
 
@@ -40,7 +40,7 @@ app.get("/api/users/:id", (req: Request, res: Response) => {
 });
 
 // Query
-app.get("/api/users", (req: Request, res: Response) => {
+app.get("/api/users", (req: any, res: Response) => {
   // const { query: {qfilter, qvalue}} = req;
   const {qfilter, qvalue} = req.query;
 
@@ -48,7 +48,7 @@ app.get("/api/users", (req: Request, res: Response) => {
   //   user[qfilter].includes(qvalue)
   // );
 
-  // if (qfilter && qvalue) return res.status(200).send(usersFilter);
+  if (qfilter && qvalue) return res.status(200).send({msg: "Donme"});
   return res.status(200).send(users);
 });
 
@@ -61,21 +61,41 @@ app.post("/api/users/", (req: Request, res: Response) => {
   return res.status(201).send({msg: users});
 });
 
-// PUT query
-app.put("/api/users/:id", (req: Request, res: Response) => {
-  const {
-    body,
-    params: {id},
-  } = req;
-  const parseId = parseInt(id);
+const resolveUserById = (req: any, res: Response, next: NextFunction) => {
+  const parseId = parseInt(req.params.id);
   if (isNaN(parseId)) return res.status(400).send({msg: "Bad request"});
 
   const findUserIndex = users.findIndex((user) => user.id === parseId);
   if (findUserIndex === -1) return res.status(404).send({msg: "Not found"});
 
-  users[findUserIndex] = {id: parseId, ...body};
+  req.findUserIndex = findUserIndex;
+
+  next();
+};
+
+// PUT query
+app.put("/api/users/:id", resolveUserById, (req: any, res: Response) => {
+  const {body, findUserIndex} = req;
+
+  // users[findUserIndex] = {id: parseId, ...body};
   return res.sendStatus(200).send({msg: "done"});
 });
+
+// Put Query 2
+// app.put("/api/users/:id", (req: Request, res: Response) => {
+//   const {
+//     body,
+//     params: {id},
+//   } = req;
+//   const parseId = parseInt(id);
+//   if (isNaN(parseId)) return res.status(400).send({msg: "Bad request"});
+
+//   const findUserIndex = users.findIndex((user) => user.id === parseId);
+//   if (findUserIndex === -1) return res.status(404).send({msg: "Not found"});
+
+//   users[findUserIndex] = {id: parseId, ...body};
+//   return res.sendStatus(200).send({msg: "done"});
+// });
 
 // Patch query
 app.patch("/api/users/:id", (req: Request, res: Response) => {
