@@ -64,7 +64,8 @@ app.post("/api/users/", (req: Request, res: Response) => {
 // This is a middleware
 const resolveUserById = (req: any, res: Response, next: NextFunction) => {
   const parseId = parseInt(req.params.id);
-  if (isNaN(parseId)) return res.status(400).send({msg: "Bad request"});
+  if (isNaN(parseId))
+    return res.status(400).send({msg: "Bad request! Invalid ID"});
 
   const findUserIndex = users.findIndex((user) => user.id === parseId);
   if (findUserIndex === -1) return res.status(404).send({msg: "Not found"});
@@ -78,10 +79,8 @@ const resolveUserById = (req: any, res: Response, next: NextFunction) => {
 app.put("/api/users/:id", resolveUserById, (req: any, res: Response) => {
   const {body, findUserIndex} = req;
 
-  // users[findUserIndex] = {id: parseId, ...body};
-
   users[findUserIndex] = {id: users[findUserIndex].id, ...body};
-  return res.status(200).send({msg: "done"});
+  return res.status(200).send({msg: "user updated"});
 });
 
 // Put Query 2 not using middleware
@@ -115,18 +114,8 @@ app.patch("/api/users/:id", (req: Request, res: Response) => {
   return res.status(201).send({msg: "user updated"});
 });
 
-// Delete request
-app.delete("/api/users/:id", (req: Request, res: Response) => {
-  const {id} = req.params;
-  const parseId = parseInt(id);
-
-  if (isNaN(parseId)) return res.status(400).send({msg: "Bad request"});
-
-  const findUserIndex = users.findIndex((user) => user.id === parseId);
-
-  if (findUserIndex === -1)
-    return res.status(404).send({msg: "User not found"});
-
+app.delete("/api/users/:id", resolveUserById, (req: any, res: Response) => {
+  const {findUserIndex} = req;
   users.splice(findUserIndex, 1);
 
   return res.status(200).send({msg: "user removed"});
