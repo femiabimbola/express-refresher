@@ -61,6 +61,7 @@ app.post("/api/users/", (req: Request, res: Response) => {
   return res.status(201).send({msg: users});
 });
 
+// This is a middleware
 const resolveUserById = (req: any, res: Response, next: NextFunction) => {
   const parseId = parseInt(req.params.id);
   if (isNaN(parseId)) return res.status(400).send({msg: "Bad request"});
@@ -78,15 +79,18 @@ app.put("/api/users/:id", resolveUserById, (req: any, res: Response) => {
   const {body, findUserIndex} = req;
 
   // users[findUserIndex] = {id: parseId, ...body};
-  return res.sendStatus(200).send({msg: "done"});
+
+  users[findUserIndex] = {id: users[findUserIndex].id, ...body};
+  return res.status(200).send({msg: "done"});
 });
 
-// Put Query 2
+// Put Query 2 not using middleware
 // app.put("/api/users/:id", (req: Request, res: Response) => {
 //   const {
-//     body,
 //     params: {id},
 //   } = req;
+
+//   const {body} = req;
 //   const parseId = parseInt(id);
 //   if (isNaN(parseId)) return res.status(400).send({msg: "Bad request"});
 
@@ -94,7 +98,7 @@ app.put("/api/users/:id", resolveUserById, (req: any, res: Response) => {
 //   if (findUserIndex === -1) return res.status(404).send({msg: "Not found"});
 
 //   users[findUserIndex] = {id: parseId, ...body};
-//   return res.sendStatus(200).send({msg: "done"});
+//   return res.status(200).send({msg: "done"});
 // });
 
 // Patch query
@@ -108,24 +112,24 @@ app.patch("/api/users/:id", (req: Request, res: Response) => {
 
   users[findUserIndex] = {...users[findUserIndex], ...body};
 
-  return res.sendStatus(201).send({msg: "user updated"});
+  return res.status(201).send({msg: "user updated"});
 });
 
 // Delete request
 app.delete("/api/users/:id", (req: Request, res: Response) => {
   const {id} = req.params;
   const parseId = parseInt(id);
+
   if (isNaN(parseId)) return res.status(400).send({msg: "Bad request"});
 
   const findUserIndex = users.findIndex((user) => user.id === parseId);
 
-  if (findUserIndex === -1) {
-    return res.sendStatus(404).send({msg: "User not found"});
-  }
+  if (findUserIndex === -1)
+    return res.status(404).send({msg: "User not found"});
 
   users.splice(findUserIndex, 1);
 
-  return res.sendStatus(200).send({msg: "user removed"});
+  return res.status(200).send({msg: "user removed"});
 });
 
 app.listen(PORT, () => console.log(`Running on port ${PORT}`));
