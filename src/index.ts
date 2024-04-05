@@ -42,14 +42,11 @@ app.get("/api/users/:id", (req: Request, res: Response) => {
 
 // Query
 app.get("/api/users", (req: any, res: Response) => {
-  // const { query: {qfilter, qvalue}} = req;
-  const {qfilter, qvalue} = req.query;
+  const {filter, value} = req.query;
 
-  // const usersFilter = users.filter((user: User) =>
-  //   user[qfilter].includes(qvalue)
-  // );
+  const usersFilter = users.filter((user: any) => user[filter].includes(value));
 
-  if (qfilter && qvalue) return res.status(200).send({msg: "Donme"});
+  if (filter && value) return res.status(200).send(usersFilter);
   return res.status(200).send(users);
 });
 
@@ -115,6 +112,7 @@ app.patch("/api/users/:id", (req: Request, res: Response) => {
   return res.status(201).send({msg: "user updated"});
 });
 
+// the delete
 app.delete("/api/users/:id", resolveUserById, (req: any, res: Response) => {
   const {findUserIndex} = req;
   users.splice(findUserIndex, 1);
