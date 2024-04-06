@@ -1,5 +1,5 @@
 import express, {Request, Response, NextFunction} from "express";
-import {query, validationResult} from "express-validator";
+import {query, validationResult, body, matchedData} from "express-validator";
 
 const app = express();
 
@@ -49,8 +49,6 @@ app.get(
     .isLength({min: 3, max: 10})
     .withMessage("min of 3 letter"),
   (req: any, res: Response) => {
-    const result = validationResult(req);
-    console.log(result);
     const {filter, value} = req.query;
 
     if (filter && value) {
@@ -63,13 +61,36 @@ app.get(
 );
 
 // Post request
-app.post("/api/users/", (req: Request, res: Response) => {
-  const {body} = req;
-  const parseId = parseInt(req.params.id);
-  const newUser = {id: users[users.length - 1].id + 1, ...body};
-  users.push(...users, newUser);
-  return res.status(201).send({msg: users});
-});
+app.post(
+  "/api/users/",
+  body("name")
+    .notEmpty()
+    .withMessage("name cannot be empty")
+    .isLength({min: 3, max: 20})
+    .withMessage("name cannot be less than 3"),
+  body("display").notEmpty().withMessage("display cannot be empty"),
+  (req: Request, res: Response) => {
+    const result = validationResult(req);
+
+    if (!result.isEmpty()) {
+      return res
+        .status(400)
+        .send({error: result.array().map((err) => err.msg)});
+    }
+
+    const data = matchedData(req);
+    // const {body} = req;
+    const {
+      body: {name, display},
+    } = req;
+
+    // const newUser = {id: users[users.length - 1].id + 1, ...body};
+    const newUser = {id: users[users.length - 1].id + 1, name, display};
+
+    users.push(...users, newUser);
+    return res.status(201).send({msg: users});
+  }
+);
 
 // This is a middleware
 const resolveUserById = (req: any, res: Response, next: NextFunction) => {
