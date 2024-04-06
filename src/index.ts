@@ -1,5 +1,5 @@
 import express, {Request, Response, NextFunction} from "express";
-import {query} from "express-validator";
+import {query, validationResult} from "express-validator";
 
 const app = express();
 
@@ -41,14 +41,26 @@ app.get("/api/users/:id", (req: Request, res: Response) => {
 });
 
 // Query
-app.get("/api/users", (req: any, res: Response) => {
-  const {filter, value} = req.query;
+app.get(
+  "/api/users",
+  query("filter")
+    .notEmpty()
+    .withMessage("Should not be empty")
+    .isLength({min: 3, max: 10})
+    .withMessage("min of 3 letter"),
+  (req: any, res: Response) => {
+    const result = validationResult(req);
+    console.log(result);
+    const {filter, value} = req.query;
 
-  const usersFilter = users.filter((user: any) => user[filter].includes(value));
-
-  if (filter && value) return res.status(200).send(usersFilter);
-  return res.status(200).send(users);
-});
+    if (filter && value) {
+      return res
+        .status(200)
+        .send(users.filter((user: any) => user[filter].includes(value)));
+    }
+    return res.status(200).send(users);
+  }
+);
 
 // Post request
 app.post("/api/users/", (req: Request, res: Response) => {
