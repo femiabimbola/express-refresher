@@ -31,14 +31,8 @@ const users: User[] = [
   {id: 4, name: "Newman", display: "newman"},
 ];
 
-// app.get("/api/users", (req: Request, res: Response) => {
-//   res.status(200).send(users);
-// });
-
 // Params tutorial
 app.get("/api/users/:id", (req: Request, res: Response) => {
-  // const {params: {id}} = req;
-
   const parseId = parseInt(req.params.id);
   if (isNaN(parseId)) return res.status(400).send({msg: "Invalid Params"});
 
@@ -67,35 +61,6 @@ app.get(
   }
 );
 
-// Post request
-// app.post(
-//   "/api/users/",
-//   body("name")
-//     .notEmpty()
-//     .withMessage("name cannot be empty")
-//     .isLength({min: 3, max: 20})
-//     .withMessage("name cannot be less than 3"),
-//   body("display").notEmpty().withMessage("display cannot be empty"),
-//   (req: Request, res: Response) => {
-//     const result = validationResult(req);
-
-//     if (!result.isEmpty()) {
-//       return res
-//         .status(400)
-//         .send({error: result.array().map((err) => err.msg)});
-//     }
-
-//     // const data = matchedData(req);
-//     const {body} = req;
-//     // const {body: {name, display},} = req;
-
-//     const newUser = {id: users[users.length - 1].id + 1, ...body};
-
-//     users.push(...users, newUser);
-//     return res.status(201).send({msg: users});
-//   }
-// );
-
 app.post(
   "/api/users/",
   checkSchema(createUserValidationSchema),
@@ -108,9 +73,7 @@ app.post(
         .send({error: result.array().map((err) => err.msg)});
     }
 
-    // const data = matchedData(req);
     const {body} = req;
-    // const {body: {name, display},} = req;
 
     const newUser = {id: users[users.length - 1].id + 1, ...body};
 
@@ -140,23 +103,6 @@ app.put("/api/users/:id", resolveUserById, (req: any, res: Response) => {
   users[findUserIndex] = {id: users[findUserIndex].id, ...body};
   return res.status(200).send({msg: "user updated"});
 });
-
-// Put Query 2 not using middleware
-// app.put("/api/users/:id", (req: Request, res: Response) => {
-//   const {
-//     params: {id},
-//   } = req;
-
-//   const {body} = req;
-//   const parseId = parseInt(id);
-//   if (isNaN(parseId)) return res.status(400).send({msg: "Bad request"});
-
-//   const findUserIndex = users.findIndex((user) => user.id === parseId);
-//   if (findUserIndex === -1) return res.status(404).send({msg: "Not found"});
-
-//   users[findUserIndex] = {id: parseId, ...body};
-//   return res.status(200).send({msg: "done"});
-// });
 
 // Patch query
 app.patch("/api/users/:id", (req: Request, res: Response) => {
