@@ -7,10 +7,12 @@ import {
   checkSchema,
 } from "express-validator";
 import {createUserValidationSchema} from "./validationSchema";
+import userRouter from "./routes/users";
 
 const app = express();
 
 app.use(express.json());
+app.use(userRouter);
 
 const PORT = process.env.PORT || 8000;
 
@@ -24,7 +26,7 @@ interface User {
   display: string;
 }
 
-const users: User[] = [
+export const users: User[] = [
   {id: 1, name: "Tush", display: "tushy1"},
   {id: 2, name: "Josh", display: "Josshy"},
   {id: 3, name: "Michael", display: "Mich43"},
@@ -32,14 +34,14 @@ const users: User[] = [
 ];
 
 // Params tutorial
-app.get("/api/users/:id", (req: Request, res: Response) => {
-  const parseId = parseInt(req.params.id);
-  if (isNaN(parseId)) return res.status(400).send({msg: "Invalid Params"});
+// app.get("/api/users/:id", (req: Request, res: Response) => {
+//   const parseId = parseInt(req.params.id);
+//   if (isNaN(parseId)) return res.status(400).send({msg: "Invalid Params"});
 
-  const user = users.find((user) => user.id === parseId);
-  if (!user) return res.status(404).send({msg: "No user found"});
-  return res.status(200).send({msg: user});
-});
+//   const user = users.find((user) => user.id === parseId);
+//   if (!user) return res.status(404).send({msg: "No user found"});
+//   return res.status(200).send({msg: user});
+// });
 
 // Query
 app.get(
