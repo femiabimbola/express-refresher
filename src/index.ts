@@ -11,7 +11,7 @@ app.use(routes);
 const PORT = process.env.PORT || 8000;
 
 app.get("/", (req: Request, res: Response) => {
-  res.cookie("firstCo", "rubbuished", {maxAge: 2000 * 5});
+  res.cookie("hello", "world", {maxAge: 6000 * 600});
   res.status(200).send({msg: "Express with a TypeScript Server"});
 });
 
