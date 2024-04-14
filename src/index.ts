@@ -22,7 +22,6 @@ app.use(routes);
 const PORT = process.env.PORT || 8000;
 
 app.get("/", (req: any, res: Response) => {
-  console.log(req.session);
   console.log(req.session.id);
   req.session.visited = true;
   res.cookie("hello", "world", {maxAge: 6000 * 600});
