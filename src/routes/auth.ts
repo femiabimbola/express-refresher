@@ -1,14 +1,25 @@
 import {Request, Response, NextFunction, Router} from "express";
 import {users} from "../db/users";
+import session from "express-session";
 
 const router = Router();
 
-router.post("/api/auth/", (req: Request, res: Response) => {
+router.post("/api/auth/", (req: any, res: Response) => {
   const {password, display} = req.body;
   const findUser = users.find((user) => user.display === display);
   if (!findUser) return res.status(401).send({msg: "Credential not found"});
-  if (findUser.password === password)
+  if (findUser.password !== password) {
     return res.status(401).send({msg: "Password not correct"});
+  }
+  req.session.user = findUser;
+  console.log(req.session);
+  return res.status(200).send({msg: "Loggimg in"});
 });
 
+router.get("/api/auth/", (req: any, res: Response) => {
+  if (!req.session.user) {
+    return res.status(200).send({msg: "Not unauthenticated"});
+  }
+  return res.status(200).send({msg: req.session.user});
+});
 export default router;
