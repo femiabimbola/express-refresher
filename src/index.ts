@@ -2,10 +2,12 @@ import express, {Request, Response} from "express";
 import session from "express-session";
 import routes from "./routes";
 import cookieParser from "cookie-parser";
+import passport from "passport";
 
 const app = express();
 
 app.use(express.json());
+
 app.use(cookieParser());
 app.use(
   session({
@@ -17,12 +19,13 @@ app.use(
     },
   })
 );
+app.use(passport.initialize());
+app.use(passport.session());
 app.use(routes);
 
 const PORT = process.env.PORT || 8000;
 
 app.get("/", (req: any, res: Response) => {
-  console.log(req.session.id);
   req.session.visited = true;
   res.cookie("hello", "world", {maxAge: 6000 * 600});
 

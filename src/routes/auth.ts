@@ -1,10 +1,13 @@
 import {Request, Response, NextFunction, Router} from "express";
 import {users} from "../db/users";
-import session from "express-session";
+import passport from "passport";
+import "../strategies/localStrategy";
 
 const router = Router();
 
-router.post("/api/auth/", (req: any, res: Response) => {
+router.post("/api/auth/", passport.authenticate("local"));
+
+router.post("/api/v1/auth/", (req: any, res: Response) => {
   const {password, display} = req.body;
   const findUser = users.find((user) => user.display === display);
   if (!findUser) return res.status(401).send({msg: "Credential not found"});
@@ -16,7 +19,7 @@ router.post("/api/auth/", (req: any, res: Response) => {
   return res.status(200).send({msg: "Loggimg in"});
 });
 
-router.get("/api/auth/", (req: any, res: Response) => {
+router.get("/api/v1/auth/", (req: any, res: Response) => {
   if (!req.session.user) {
     return res.status(200).send({msg: "Not unauthenticated"});
   }
