@@ -3,12 +3,15 @@ import {Strategy} from "passport-local";
 import {users} from "../db/users";
 
 passport.serializeUser((user: any, done) => {
-  console.log(`inside serialize user ${user}`);
+  // This goes into session -> first done (err, object)
+  console.log(user);
   done(null, user.id);
+  console.log("done");
 });
 
 passport.deserializeUser((id, done) => {
   console.log(`inside deserialize user ${id}`);
+  // This goes into req.
   try {
     const findUser = users.find((user) => user.id === id);
     if (!findUser) throw new Error("user not found");

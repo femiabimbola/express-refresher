@@ -5,7 +5,13 @@ import "../strategies/localStrategy";
 
 const router = Router();
 
-router.post("/api/auth/", passport.authenticate("local"));
+router.post(
+  "/api/auth/",
+  passport.authenticate("local"),
+  (req: any, res: Response) => {
+    res.status(201).send({msg: "successfully log in"});
+  }
+);
 
 router.post("/api/v1/auth/", (req: any, res: Response) => {
   const {password, display} = req.body;
