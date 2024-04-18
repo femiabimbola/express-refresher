@@ -5,6 +5,7 @@ import "../strategies/localStrategy";
 
 const router = Router();
 
+// user signin
 router.post(
   "/api/auth/",
   passport.authenticate("local"),
@@ -12,6 +13,13 @@ router.post(
     res.status(201).send({msg: "successfully log in"});
   }
 );
+
+// passport user
+router.get("/api/auth", (req: Request, res: Response) => {
+  console.log(req.session);
+  if (!req.user) return res.status(200).send({msg: "No user found"});
+  return res.status(200).send({msg: req.user});
+});
 
 router.post("/api/v1/auth/", (req: any, res: Response) => {
   const {password, display} = req.body;

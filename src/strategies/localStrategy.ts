@@ -4,6 +4,8 @@ import {users} from "../db/users";
 
 passport.serializeUser((user: any, done) => {
   // This goes into session -> first done (err, object)
+  // you are using user id for the serialize
+  console.log(`inside serialize user`);
   console.log(user);
   done(null, user.id);
   console.log("done");
