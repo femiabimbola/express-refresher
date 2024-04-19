@@ -13,7 +13,7 @@ passport.serializeUser((user: any, done) => {
 
 passport.deserializeUser((id, done) => {
   console.log(`inside deserialize user ${id}`);
-  // This goes into req.
+  // This goes into every req.
   try {
     const findUser = users.find((user) => user.id === id);
     if (!findUser) throw new Error("user not found");

@@ -21,6 +21,9 @@ router.get("/api/auth", (req: Request, res: Response) => {
   return res.status(200).send({msg: req.user});
 });
 
+// Passport logout
+router.post("/api/auth/logout");
+
 router.post("/api/v1/auth/", (req: any, res: Response) => {
   const {password, display} = req.body;
   const findUser = users.find((user) => user.display === display);
