@@ -22,7 +22,12 @@ router.get("/api/auth", (req: Request, res: Response) => {
 });
 
 // Passport logout
-router.post("/api/auth/logout");
+router.post("/api/auth/logout", (req: Request, res: Response) => {
+  if (!req.user) return res.status(401).send({msg: "not signed in"});
+  req.logOut((error) => {
+    if (error) return res.status(401).send({msg: "not signed in"});
+  });
+});
 
 router.post("/api/v1/auth/", (req: any, res: Response) => {
   const {password, display} = req.body;
