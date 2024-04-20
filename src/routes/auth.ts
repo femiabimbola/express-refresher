@@ -7,7 +7,7 @@ const router = Router();
 
 // user signin
 router.post(
-  "/api/auth/",
+  "/api/auth/login",
   passport.authenticate("local"),
   (req: any, res: Response) => {
     res.status(201).send({msg: "successfully log in"});
@@ -16,16 +16,18 @@ router.post(
 
 // passport user
 router.get("/api/auth", (req: Request, res: Response) => {
-  console.log(req.session);
-  if (!req.user) return res.status(200).send({msg: "No user found"});
+  // console.log(req.session);
+  if (!req.user)
+    return res.status(200).send({msg: "Sign in or create an account"});
   return res.status(200).send({msg: req.user});
 });
 
 // Passport logout
-router.post("/api/auth/logout", (req: Request, res: Response) => {
+router.get("/api/auth/logout", (req: Request, res: Response) => {
   if (!req.user) return res.status(401).send({msg: "not signed in"});
   req.logOut((error) => {
     if (error) return res.status(401).send({msg: "not signed in"});
+    return res.status(200).send({msg: "logged out"});
   });
 });
 
