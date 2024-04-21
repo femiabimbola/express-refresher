@@ -3,7 +3,7 @@ import session from "express-session";
 import routes from "./routes";
 import cookieParser from "cookie-parser";
 import passport from "passport";
-import mongoose from "mongoose";
+import connectToDB from "./config/db";
 
 const app = express();
 
@@ -26,10 +26,7 @@ app.use(routes);
 
 const PORT = process.env.PORT || 8000;
 
-// mongoose
-//   .connect(db.MongoURI, {useNewUrlParser: true, useUnifiedTopology: true})
-//   .then(() => console.log("Mongodb connected...."))
-//   .catch((err) => console.log((err));
+connectToDB();
 
 app.get("/", (req: any, res: Response) => {
   req.session.visited = true;
