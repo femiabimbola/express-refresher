@@ -1,5 +1,6 @@
 import {Request, Response, NextFunction, Router} from "express";
 import {users} from "../db/users";
+import {user} from "../db/schemas/usersSchema";
 
 import {
   query,
@@ -8,7 +9,10 @@ import {
   matchedData,
   checkSchema,
 } from "express-validator";
-import {createUserValidationSchema} from "../validationSchema";
+import {
+  createUserValidationSchema,
+  createUserValidationSchema2,
+} from "../validationSchema";
 import {resolveUserById} from "../middleware/users";
 
 const router = Router();
@@ -54,6 +58,27 @@ router.post(
     const newUser = {id: users[users.length - 1].id + 1, ...body};
     users.push(...users, newUser);
     return res.status(201).send({msg: users});
+  }
+);
+
+router.post(
+  "/api/v1/users/",
+  checkSchema(createUserValidationSchema2),
+  async (req: Request, res: Response) => {
+    const result = validationResult(req);
+    if (!result.isEmpty()) {
+      // return res.status(400).send({error: result.array().map((err) => err)});
+      return res.status(400).send(result.array());
+    }
+    const {body} = req;
+    const data = matchedData(req);
+    const newUser = new user(data); // creating the user
+    try {
+      const savedUser = await newUser.save();
+      return res.status(201).send(savedUser);
+    } catch (error) {
+      return res.status(400).send(error);
+    }
   }
 );
 
