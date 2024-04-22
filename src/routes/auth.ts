@@ -1,13 +1,23 @@
 import {Request, Response, NextFunction, Router} from "express";
 import {users} from "../db/users";
 import passport from "passport";
-import "../strategies/localStrategy";
+// import "../strategies/localStrategy";
+import "../strategies/localStrategy2";
 
 const router = Router();
 
-// user signin
+// user signin on localdb
 router.post(
   "/api/auth/login",
+  passport.authenticate("local"),
+  (req: any, res: Response) => {
+    res.status(201).send({msg: "successfully log in"});
+  }
+);
+
+// Mongodb
+router.post(
+  "/api/auth/v1/login",
   passport.authenticate("local"),
   (req: any, res: Response) => {
     res.status(201).send({msg: "successfully log in"});

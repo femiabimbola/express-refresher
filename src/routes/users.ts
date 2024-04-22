@@ -61,6 +61,7 @@ router.post(
   }
 );
 
+// create user
 router.post(
   "/api/v1/users/",
   checkSchema(createUserValidationSchema2),
