@@ -35,7 +35,16 @@ router.get(
     .isLength({min: 3, max: 10})
     .withMessage("min of 3 letter"),
   (req: any, res: Response) => {
+    const result = validationResult(req);
+    console.log(result);
     const {filter, value} = req.query;
+    req.sessionStore.get(req.session.id, (err: any, sessionData: any) => {
+      if (err) {
+        console.log(err);
+        throw err;
+      }
+      console.log(`${sessionData} ---> session store`);
+    });
 
     if (filter && value) {
       return res
