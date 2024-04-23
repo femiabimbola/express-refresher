@@ -15,7 +15,7 @@ router.post(
   }
 );
 
-// Mongodb
+// Mongodb signin
 router.post(
   "/api/auth/v1/login",
   passport.authenticate("local"),

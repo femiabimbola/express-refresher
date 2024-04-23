@@ -14,6 +14,7 @@ import {
   createUserValidationSchema2,
 } from "../validationSchema";
 import {resolveUserById} from "../middleware/users";
+import {hashPassword} from "../utils/helper";
 
 const router = Router();
 
@@ -61,18 +62,20 @@ router.post(
   }
 );
 
-// create user
+// create user in mongodb
 router.post(
   "/api/v1/users/",
   checkSchema(createUserValidationSchema2),
   async (req: Request, res: Response) => {
     const result = validationResult(req);
     if (!result.isEmpty()) {
-      // return res.status(400).send({error: result.array().map((err) => err)});
       return res.status(400).send(result.array());
     }
     const {body} = req;
     const data = matchedData(req);
+    console.log(data);
+    data.password = await hashPassword(data.password);
+    console.log(data);
     const newUser = new user(data); // creating the user
     try {
       const savedUser = await newUser.save();
