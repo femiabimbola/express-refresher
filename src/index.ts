@@ -3,7 +3,9 @@ import session from "express-session";
 import routes from "./routes";
 import cookieParser from "cookie-parser";
 import passport from "passport";
+import MongoStore from "connect-mongo";
 import connectToDB from "./config/db";
+import mongoose from "mongoose";
 
 const app = express();
 
@@ -18,6 +20,9 @@ app.use(
     cookie: {
       maxAge: 60000 * 60,
     },
+    store: MongoStore.create({
+      client: mongoose.connection.getClient(),
+    }),
   })
 );
 app.use(passport.initialize());
