@@ -20,9 +20,9 @@ app.use(
     cookie: {
       maxAge: 60000 * 60,
     },
-    store: MongoStore.create({
-      client: mongoose.connection.getClient(),
-    }),
+    // store: MongoStore.create({
+    //   client: mongoose.connection.getClient(),
+    // }),
   })
 );
 app.use(passport.initialize());
