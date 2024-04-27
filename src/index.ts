@@ -10,6 +10,7 @@ import mongoose from "mongoose";
 const app = express();
 
 app.use(express.json());
+connectToDB();
 
 app.use(cookieParser());
 app.use(
@@ -20,9 +21,9 @@ app.use(
     cookie: {
       maxAge: 60000 * 60,
     },
-    // store: MongoStore.create({
-    //   client: mongoose.connection.getClient(),
-    // }),
+    store: MongoStore.create({
+      client: mongoose.connection.getClient(),
+    }),
   })
 );
 app.use(passport.initialize());
@@ -30,8 +31,6 @@ app.use(passport.session());
 app.use(routes);
 
 const PORT = process.env.PORT || 8000;
-
-connectToDB();
 
 app.get("/", (req: any, res: Response) => {
   req.session.visited = true;
