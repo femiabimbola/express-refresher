@@ -3,6 +3,7 @@ import {users} from "../db/users";
 import passport from "passport";
 // import "../strategies/localStrategy";
 import "../strategies/localStrategy2";
+import "../strategies/googleStrategy";
 
 const router = Router();
 
@@ -15,13 +16,21 @@ router.post(
   }
 );
 
-// Mongodb signin
+// Mongodb signin with passport
 router.post(
   "/api/auth/v1/login",
   passport.authenticate("local"), //using localstrategy2
   (req: any, res: Response) => {
     res.status(201).send({msg: "successfully log in"});
   }
+);
+
+//Signin with google
+router.get(
+  "/api/auth/google",
+  passport.authenticate("google", {
+    scope: ["email"],
+  })
 );
 
 // Localdb signin without passport
