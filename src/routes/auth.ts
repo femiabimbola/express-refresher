@@ -29,8 +29,17 @@ router.post(
 router.get(
   "/api/auth/google",
   passport.authenticate("google", {
-    scope: ["email"],
+    scope: ["email", "profile"],
   })
+);
+
+router.get(
+  "/api/auth/google/callback",
+  passport.authenticate("google"),
+  (req: any, res: Response) => {
+    console.log("here");
+    res.status(200).send({msg: "successfully signed in"});
+  }
 );
 
 // Localdb signin without passport

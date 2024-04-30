@@ -1,6 +1,5 @@
 import passport from "passport";
 import {Strategy} from "passport-local";
-import {users} from "../db/users";
 import {user} from "../db/schemas/usersSchema";
 import {comparePassword} from "../utils/helper";
 
