@@ -15,8 +15,20 @@ export default passport.use(
     },
     // there is no password, check if user dey, if user no dey create user
     async (accessToken, refreshToken, profile, done) => {
+      let findUser;
+      try {
+        findUser = await GoogleUser.findOne({googleId: profile.id});
+      } catch (error) {}
       console.log(profile);
-      const findUser = await GoogleUser.findOne({});
+
+      if (!findUser) {
+        const newUser = new GoogleUser({
+          username: profile.username,
+          googleId: profile.id,
+        });
+        const newSavedUser = await newUser.save();
+        done(null, newSavedUser);
+      }
     }
   )
 );
