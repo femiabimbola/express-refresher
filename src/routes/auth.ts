@@ -2,8 +2,8 @@ import {Request, Response, NextFunction, Router} from "express";
 import {users} from "../db/users";
 import passport from "passport";
 // import "../strategies/localStrategy";
-import "../strategies/localStrategy2";
 import "../strategies/googleStrategy";
+import "../strategies/localStrategy2";
 
 const router = Router();
 
@@ -37,7 +37,6 @@ router.get(
   "/api/auth/google/callback",
   passport.authenticate("google"),
   (req: any, res: Response) => {
-    console.log("here");
     res.status(200).send({msg: "successfully signed in"});
   }
 );
