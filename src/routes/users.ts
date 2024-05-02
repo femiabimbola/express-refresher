@@ -1,5 +1,5 @@
 import {Request, Response, NextFunction, Router} from "express";
-import {users} from "../db/users";
+import {mockUsers} from "../db/users";
 import {user} from "../db/schemas/usersSchema";
 
 import {
@@ -15,17 +15,11 @@ import {
 } from "../validationSchema";
 import {resolveUserById} from "../middleware/users";
 import {hashPassword} from "../utils/helper";
+import {getUsersById} from "../controllers/users";
 
 const router = Router();
 
-router.get("/api/users/:id", (req: Request, res: Response) => {
-  const parseId = parseInt(req.params.id);
-  if (isNaN(parseId)) return res.status(400).send({msg: "Invalid Params"});
-
-  const user = users.find((user) => user.id === parseId);
-  if (!user) return res.status(404).send({msg: "No user found"});
-  return res.status(200).send({msg: user});
-});
+router.get("/api/users/:id", getUsersById);
 
 router.get(
   "/api/users",
@@ -49,9 +43,9 @@ router.get(
     if (filter && value) {
       return res
         .status(200)
-        .send(users.filter((user: any) => user[filter].includes(value)));
+        .send(mockUsers.filter((user: any) => user[filter].includes(value)));
     }
-    return res.status(200).send(users);
+    return res.status(200).send(mockUsers);
   }
 );
 
@@ -66,9 +60,9 @@ router.post(
     }
     const {body} = req;
     const data = matchedData(req);
-    const newUser = {id: users[users.length - 1].id + 1, ...body};
-    users.push(...users, newUser);
-    return res.status(201).send({msg: users});
+    const newUser = {id: mockUsers[mockUsers.length - 1].id + 1, ...body};
+    mockUsers.push(...mockUsers, newUser);
+    return res.status(201).send({msg: mockUsers});
   }
 );
 
@@ -99,7 +93,7 @@ router.post(
 // PUT query
 router.put("/api/users/:id", resolveUserById, (req: any, res: Response) => {
   const {body, findUserIndex} = req;
-  users[findUserIndex] = {id: users[findUserIndex].id, ...body};
+  mockUsers[findUserIndex] = {id: mockUsers[findUserIndex].id, ...body};
   return res.status(200).send({msg: "user updated"});
 });
 
@@ -109,10 +103,10 @@ router.patch("/api/users/:id", (req: Request, res: Response) => {
   const parseId = parseInt(req.params.id);
   if (isNaN(parseId)) return res.status(400).send({msg: "Bad request"});
 
-  const findUserIndex = users.findIndex((user) => user.id === parseId);
+  const findUserIndex = mockUsers.findIndex((user) => user.id === parseId);
   if (findUserIndex === -1) return res.status(404).send({msg: "Not found"});
 
-  users[findUserIndex] = {...users[findUserIndex], ...body};
+  mockUsers[findUserIndex] = {...mockUsers[findUserIndex], ...body};
 
   return res.status(201).send({msg: "user updated"});
 });
@@ -120,7 +114,7 @@ router.patch("/api/users/:id", (req: Request, res: Response) => {
 // the delete
 router.delete("/api/users/:id", resolveUserById, (req: any, res: Response) => {
   const {findUserIndex} = req;
-  users.splice(findUserIndex, 1);
+  mockUsers.splice(findUserIndex, 1);
 
   return res.status(200).send({msg: "user removed"});
 });

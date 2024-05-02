@@ -1,5 +1,5 @@
 import {Request, Response, NextFunction, Router} from "express";
-import {users} from "../db/users";
+import {mockUsers} from "../db/users";
 import passport from "passport";
 // import "../strategies/localStrategy";
 import "../strategies/googleStrategy";
@@ -44,7 +44,7 @@ router.get(
 // Localdb signin without passport
 router.post("/api/v1/auth/", (req: any, res: Response) => {
   const {password, display} = req.body;
-  const findUser = users.find((user) => user.display === display);
+  const findUser = mockUsers.find((user) => user.display === display);
   if (!findUser) return res.status(401).send({msg: "Credential not found"});
   if (findUser.password !== password) {
     return res.status(401).send({msg: "Password not correct"});
