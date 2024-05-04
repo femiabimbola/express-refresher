@@ -36,7 +36,7 @@ describe("getUsersById", () => {
 
   it("should return a 404 status when no user is found", () => {
     const mockReq = {
-      params: {id: 999},
+      params: {id: "999"},
     } as unknown as Request;
 
     const mockRes = {
