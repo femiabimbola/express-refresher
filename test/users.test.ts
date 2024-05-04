@@ -3,10 +3,16 @@ import {Request, Response, NextFunction, Router} from "express";
 
 import {getUsersById} from "../src/controllers/users";
 
-const mockRequest: any = 1;
-const mockResponse: any = {};
-describe("get users", () => {
+const mockRequest: any = {
+  params: 1,
+};
+const mockResponse: any = {
+  send: jest.fn(),
+  status: jest.fn(),
+};
+describe("Users function", () => {
   it("It should get user", () => {
     getUsersById(mockRequest, mockResponse);
+    expect(mockResponse.send).toHaveBeenCalled();
   });
 });
