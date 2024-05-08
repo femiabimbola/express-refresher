@@ -15,7 +15,7 @@ import {
 } from "../validationSchema";
 import {resolveUserById} from "../middleware/users";
 import {hashPassword} from "../utils/helper";
-import {getUsersById} from "../controllers/users";
+import {createUser, getUsersById} from "../controllers/users";
 
 const router = Router();
 
@@ -70,24 +70,7 @@ router.post(
 router.post(
   "/api/v1/users/",
   checkSchema(createUserValidationSchema2),
-  async (req: Request, res: Response) => {
-    const result = validationResult(req);
-    if (!result.isEmpty()) {
-      return res.status(400).send(result.array());
-    }
-    const {body} = req;
-    const data = matchedData(req);
-    console.log(data);
-    data.password = await hashPassword(data.password);
-    console.log(data);
-    const newUser = new user(data); // creating the user
-    try {
-      const savedUser = await newUser.save();
-      return res.status(201).send(savedUser);
-    } catch (error) {
-      return res.status(400).send(error);
-    }
-  }
+  createUser
 );
 
 // PUT query
