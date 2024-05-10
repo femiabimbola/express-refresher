@@ -1,22 +1,17 @@
-import {genSaltSync, hashSync} from "bcrypt";
 import validator from "express-validator";
-// import {createUser} from "../src/controllers/users";
 const {createUser} = require("../src/controllers/users");
+import {comparePassword} from "../src/utils/helper";
 
 jest.mock("express-validator", () => ({
   validationResult: jest.fn(() => ({
     isEmpty: jest.fn(() => false),
     array: jest.fn(() => [{msg: "Invalid Field"}]),
   })),
+
   matchedData: jest.fn(() => ({
     username: "test",
     password: "password",
     displayName: "testname",
-  })),
-
-  hashPassword: jest.fn(() => ({
-    genSaltSync: jest.fn(() => "sometest"),
-    hashSync: jest.fn(() => "hashedthefreakedpassword"),
   })),
 }));
 
@@ -30,6 +25,10 @@ const mockResponse = {
 };
 
 describe("create users", () => {
+  jest.mock("../src/utils/helper", () => {
+    return {hashPassword: jest.fn((password) => "hashedpassword")};
+  });
+
   const mockRequest = {
     body: {
       // Provide necessary data for creating a user
@@ -48,7 +47,9 @@ describe("create users", () => {
   });
 
   it("should create a new user", async () => {
-    // Mock request and response objects
+    // jest.spyOn(validator, "validationResult").mockImplementationOnce(() => ({
+    //   isEmpty: jest.fn(() => true)
+    // }))
     const req = {
       body: {
         // Provide necessary data for creating a user
