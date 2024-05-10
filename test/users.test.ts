@@ -2,6 +2,11 @@
 
 import {Request, Response} from "express";
 import {getUsersById} from "../src/controllers/users";
+import {hashPassword} from "../src/utils/helper";
+
+jest.mock("bcrypt", () => ({
+  hashPassword: jest.fn(),
+}));
 
 describe("getUsersById", () => {
   it("should return a user when a valid ID is provided", () => {
@@ -56,6 +61,10 @@ describe("getUsersById", () => {
 // Assuming your function is defined in a file called 'userController.js'
 
 const {createUser} = require("../src/controllers/users");
+
+jest.mock("validator", () => ({
+  hashPassword: jest.fn(() => ({password: "somehashedtext"})),
+}));
 
 describe("createUser", () => {
   it("should create a new user", async () => {

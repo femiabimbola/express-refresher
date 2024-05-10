@@ -15,18 +15,18 @@ export const getUsersById = (req: Request, res: Response) => {
 
 //  Create user in the  mongodb
 export const createUser = async (req: Request, res: Response) => {
-  const result = validationResult(req);
+  const result = validationResult(req); // calling the express validator
   if (!result.isEmpty()) {
     return res.status(400).send(result.array());
-  }
+  } // breaking the code if express validator get error
   const {body} = req;
-  const data = matchedData(req);
+  const data = matchedData(req); // the validated data from express data
   // console.log(data);
-  // data.password = await hashPassword(data.password);
+  data.password = await hashPassword(data.password); //hashing the password
   // console.log(data);
-  const newUser = new user(data); // creating the user
+  const newUser = new user(data); // creating the user mongoose model
   try {
-    const savedUser = await newUser.save();
+    const savedUser = await newUser.save(); // saving the user moder
     return res.status(201).send(savedUser);
   } catch (error) {
     return res.status(400).send(error);
