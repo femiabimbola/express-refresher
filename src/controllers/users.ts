@@ -21,7 +21,7 @@ export const createUser = async (req: Request, res: Response) => {
   } // breaking the code if express validator get error
   const {body} = req;
   const data = matchedData(req); // the validated data from express data
-  console.log(data);
+
   data.password = await hashPassword(data.password); //hashing the password
   const newUser = new user(data); // creating the user mongoose model
   try {
