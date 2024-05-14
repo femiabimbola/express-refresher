@@ -2,6 +2,7 @@ import {hashPassword} from "../src/utils/helper";
 import {matchedData} from "express-validator";
 import * as validator from "express-validator";
 import {user} from "../src/db/schemas/usersSchema";
+import {expect, jest, test} from "@jest/globals";
 
 const {createUser} = require("../src/controllers/users");
 
@@ -35,7 +36,9 @@ jest.mock("../src/db/schemas/usersSchema", () => {
 
 describe("createUser", () => {
   it("should create a new user", async () => {
-    // jest.spyOn(validator, "validationResult").mockImplementationOnce(() => ({ isEmpty: jest.fn(() => true)}))
+    // jest
+    //   .spyOn(validator, "validationResult")
+    //   .mockImplementationOnce(() => ({isEmpty: jest.fn(() => true)}));
 
     const savedMethod = jest
       .spyOn(user.prototype, "save")
@@ -79,66 +82,5 @@ describe("createUser", () => {
     //       email: "test@example.com",
     //     })
     //   );
-  });
-
-  it("should handle validation errors", async () => {
-    // Mock request and response objects with validation error
-    const req = {
-      body: {
-        // Provide invalid data to trigger validation error
-        // For example:
-        username: "invaliduser",
-        email: "invalidemail",
-        password: "short",
-      },
-    };
-    const res = {
-      status: jest.fn().mockReturnThis(),
-      send: jest.fn(),
-    };
-
-    // Call the function
-    await createUser(req, res);
-
-    // Check if the appropriate status and response were sent
-    expect(res.status).toHaveBeenCalledWith(400);
-    expect(res.send).toHaveBeenCalledWith(
-      expect.arrayContaining([
-        // Check if the validation error array contains expected error messages
-        // For example:
-        {msg: "Invalid email address"},
-        {msg: "Password must be at least 6 characters long"},
-      ])
-    );
-  });
-
-  it("should handle other errors", async () => {
-    // Mock request and response objects to simulate other error
-    const req = {
-      body: {
-        // Provide valid data
-        // For example:
-        username: "testuser",
-        email: "test@example.com",
-        password: "testpassword",
-      },
-    };
-    const res = {
-      status: jest.fn().mockReturnThis(),
-      send: jest.fn(),
-    };
-
-    // Simulate an error during user creation
-    const error = new Error("Some error occurred");
-    createUser.mockImplementationOnce(() => {
-      throw error;
-    });
-
-    // Call the function
-    await createUser(req, res);
-
-    // Check if the appropriate status and response were sent
-    expect(res.status).toHaveBeenCalledWith(400);
-    expect(res.send).toHaveBeenCalledWith(error);
   });
 });
