@@ -27,13 +27,15 @@ jest.mock("../src/utils/helper", () => {
   return {hashPassword: jest.fn((password) => "hashedpassword")};
 });
 
-jest.mock("../src/db/schemas/usersSchema", () => {
-  return {
-    user: jest.fn((matchedData) => {
-      "some object";
-    }),
-  };
-});
+// jest.mock("../src/db/schemas/usersSchema", () => {
+//   return {
+//     user: jest.fn((matchedData) => {
+//       "some object";
+//     }),
+//   };
+// });
+
+jest.mock("../src/db/schemas/usersSchema");
 
 describe("createUser", () => {
   it("should create a new user", async () => {
@@ -42,14 +44,14 @@ describe("createUser", () => {
     //   .mockImplementationOnce(() => ({isEmpty: jest.fn(() => true)}));
     console.log(user.mock);
 
-    // const savedMethod = jest
-    //   .spyOn(user.prototype, "save")
-    //   .mockResolvedValueOnce({
-    //     id: 1,
-    //     username: "testuser",
-    //     email: "test@example.com",
-    //     password: "hashedpassword",
-    //   });
+    const savedMethod = jest
+      .spyOn(user.prototype, "save")
+      .mockResolvedValueOnce({
+        id: 1,
+        username: "testuser",
+        email: "test@example.com",
+        password: "hashedpassword",
+      });
     const req = {
       body: {
         username: "testuser",
@@ -76,12 +78,13 @@ describe("createUser", () => {
       password: "hashedpassword",
     });
 
-    // expect(savedMethod).toHaveBeenCalled();
+    expect(savedMethod).toHaveBeenCalled(); //save method was called
     // expect(user.mock.instances[0].save).toHaveBeenCalled()
     expect(res.status).toHaveBeenCalledWith(201);
-    //   expect(res.send).toHaveBeenCalledWith({
-    //       username: "testuser",
-    //       email: "test@example.com",
-    //   });
+    expect(res.send).toHaveBeenCalled();
+    // expect(res.send).toHaveBeenCalledWith({
+    //   username: "testuser",
+    //   displayName: "testname",
+    // });
   });
 });
