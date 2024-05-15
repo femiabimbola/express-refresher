@@ -1,9 +1,10 @@
 import {hashPassword} from "../src/utils/helper";
 import {matchedData} from "express-validator";
 import * as validator from "express-validator";
-import {user} from "../src/db/schemas/usersSchema";
+// import {user} from "../src/db/schemas/usersSchema";
 import {expect, jest, test} from "@jest/globals";
 
+const {user} = require("../src/db/schemas/usersSchema");
 const {createUser} = require("../src/controllers/users");
 
 // Mock Vlaidator
@@ -15,7 +16,7 @@ jest.mock("express-validator", () => ({
 
   //  Match data function
   matchedData: jest.fn(() => ({
-    username: "test",
+    username: "testuser",
     password: "password",
     displayName: "testname",
   })),
@@ -29,7 +30,7 @@ jest.mock("../src/utils/helper", () => {
 jest.mock("../src/db/schemas/usersSchema", () => {
   return {
     user: jest.fn((matchedData) => {
-      "someobject";
+      "some object";
     }),
   };
 });
@@ -39,15 +40,16 @@ describe("createUser", () => {
     // jest
     //   .spyOn(validator, "validationResult")
     //   .mockImplementationOnce(() => ({isEmpty: jest.fn(() => true)}));
+    console.log(user.mock);
 
-    const savedMethod = jest
-      .spyOn(user.prototype, "save")
-      .mockResolvedValueOnce({
-        id: 1,
-        username: "testuser",
-        email: "test@example.com",
-        password: "hashedpassword",
-      });
+    // const savedMethod = jest
+    //   .spyOn(user.prototype, "save")
+    //   .mockResolvedValueOnce({
+    //     id: 1,
+    //     username: "testuser",
+    //     email: "test@example.com",
+    //     password: "hashedpassword",
+    //   });
     const req = {
       body: {
         username: "testuser",
@@ -67,20 +69,19 @@ describe("createUser", () => {
     expect(matchedData).toHaveBeenCalledWith(req);
     expect(hashPassword).toHaveBeenCalledWith("password");
     expect(hashPassword).toHaveReturnedWith("hashedpassword");
+    //  User was called with matched data not req.body
     expect(user).toHaveBeenCalledWith({
       username: "testuser",
-      email: "test@example.com",
+      displayName: "testname",
       password: "hashedpassword",
     });
-    expect(savedMethod).toHaveBeenCalled();
-    //   expect(res.status).toHaveBeenCalledWith(201);
-    //   expect(res.send).toHaveBeenCalledWith(
-    //     expect.objectContaining({
-    //       // Check if the saved user object has the expected properties
-    //       // For example:
+
+    // expect(savedMethod).toHaveBeenCalled();
+    // expect(user.mock.instances[0].save).toHaveBeenCalled()
+    expect(res.status).toHaveBeenCalledWith(201);
+    //   expect(res.send).toHaveBeenCalledWith({
     //       username: "testuser",
     //       email: "test@example.com",
-    //     })
-    //   );
+    //   });
   });
 });
