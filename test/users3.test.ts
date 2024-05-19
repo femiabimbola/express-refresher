@@ -1,7 +1,6 @@
 import {hashPassword} from "../src/utils/helper";
 import {matchedData} from "express-validator";
 import * as validator from "express-validator";
-// import {user} from "../src/db/schemas/usersSchema";
 import {expect, jest, test} from "@jest/globals";
 
 const {user} = require("../src/db/schemas/usersSchema");
@@ -49,13 +48,15 @@ describe("createUser", () => {
       .mockResolvedValueOnce({
         id: 1,
         username: "testuser",
-        email: "test@example.com",
+        // email: "test@example.com",
+        displayName: "testname",
         password: "hashedpassword",
       });
     const req = {
       body: {
         username: "testuser",
-        email: "test@example.com",
+        // email: "test@example.com",
+        displayName: "testname",
         password: "testpassword",
       },
     };
@@ -79,12 +80,14 @@ describe("createUser", () => {
     });
 
     expect(savedMethod).toHaveBeenCalled(); //save method was called
-    // expect(user.mock.instances[0].save).toHaveBeenCalled()
+    expect(user.mock.instances[0].save).toHaveBeenCalled();
     expect(res.status).toHaveBeenCalledWith(201);
     expect(res.send).toHaveBeenCalled();
-    // expect(res.send).toHaveBeenCalledWith({
-    //   username: "testuser",
-    //   displayName: "testname",
-    // });
+    expect(res.send).toHaveBeenCalledWith(
+      expect.objectContaining({
+        username: "testuser",
+        displayName: "testname",
+      })
+    );
   });
 });
