@@ -26,18 +26,11 @@ jest.mock("../src/utils/helper", () => {
   return {hashPassword: jest.fn((password) => "hashedpassword")};
 });
 
-// jest.mock("../src/db/schemas/usersSchema", () => {
-//   return {
-//     user: jest.fn((matchedData) => {
-//       "some object";
-//     }),
-//   };
-// });
-
+// Database mock
 jest.mock("../src/db/schemas/usersSchema");
 
 describe("createUser", () => {
-  it("should create a new user", async () => {
+  it("should send status of 201 when a new user is created", async () => {
     // jest
     //   .spyOn(validator, "validationResult")
     //   .mockImplementationOnce(() => ({isEmpty: jest.fn(() => true)}));
@@ -85,9 +78,37 @@ describe("createUser", () => {
     expect(res.send).toHaveBeenCalled();
     expect(res.send).toHaveBeenCalledWith(
       expect.objectContaining({
+        id: 1,
         username: "testuser",
         displayName: "testname",
       })
     );
+  });
+
+  it("should send status of 400 when database fails to save", async () => {
+    // jest.spyOn(validator, "validationResult").mockImplementationOnce(() => ({
+    //   isEmpty: jest.fn(() => false),
+    //   array: jest.fn(() => [{}]),
+    // }));
+
+    const req = {
+      body: {
+        username: "testuser",
+        displayName: "testname",
+        password: "testpassword",
+      },
+    };
+    const res = {
+      status: jest.fn().mockReturnThis(),
+      send: jest.fn(),
+    };
+
+    const savedMethod = jest
+      .spyOn(user.prototype, "save")
+      .mockImplementationOnce(() => Promise.reject("Failed to save user"));
+    // Call the function
+    await createUser(req, res);
+    expect(savedMethod).toHaveBeenCalled();
+    expect(res.status).toHaveBeenCalledWith(400);
   });
 });
