@@ -6,7 +6,7 @@ const UserSchema = new Schema({
   password: {type: String, required: true},
 });
 
-export const user = model("user", UserSchema);
+export const User = model("user", UserSchema);
 
 // const UsernOTSchema = new mongoose.Schema({
 //   username: {type:mongoose.Schema.Types.String}

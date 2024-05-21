@@ -1,6 +1,7 @@
 import passport from "passport";
 import {Strategy} from "passport-local";
-import {users} from "../db/users";
+// import {users} from "../db/users";
+import {User} from "../db/schemas/usersSchema";
 
 passport.serializeUser((user: any, done) => {
   // This goes into session -> first done (err, object)

@@ -1,6 +1,6 @@
 import {Request, Response, NextFunction, Router} from "express";
 import {mockUsers} from "../db/users";
-import {user} from "../db/schemas/usersSchema";
+import {User} from "../db/schemas/usersSchema";
 
 import {
   query,
@@ -73,14 +73,14 @@ router.post(
   createUser
 );
 
-// PUT query
+// Updating users details
 router.put("/api/users/:id", resolveUserById, (req: any, res: Response) => {
   const {body, findUserIndex} = req;
   mockUsers[findUserIndex] = {id: mockUsers[findUserIndex].id, ...body};
   return res.status(200).send({msg: "user updated"});
 });
 
-// Patch query
+// updating few user msg
 router.patch("/api/users/:id", (req: Request, res: Response) => {
   const {body} = req;
   const parseId = parseInt(req.params.id);
@@ -94,7 +94,7 @@ router.patch("/api/users/:id", (req: Request, res: Response) => {
   return res.status(201).send({msg: "user updated"});
 });
 
-// the delete
+// Delete a user from mongodb
 router.delete("/api/users/:id", resolveUserById, (req: any, res: Response) => {
   const {findUserIndex} = req;
   mockUsers.splice(findUserIndex, 1);

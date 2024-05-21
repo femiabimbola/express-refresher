@@ -1,6 +1,6 @@
 import passport from "passport";
 import {Strategy} from "passport-local";
-import {user} from "../db/schemas/usersSchema";
+import {User} from "../db/schemas/usersSchema";
 import {comparePassword} from "../utils/helper";
 
 passport.serializeUser((user: any, done) => {
@@ -9,7 +9,7 @@ passport.serializeUser((user: any, done) => {
 
 passport.deserializeUser(async (id, done) => {
   try {
-    const findUser = await user.findById(id);
+    const findUser = await User.findById(id);
     if (!findUser) throw new Error("user not found");
     done(null, findUser);
   } catch (error) {
@@ -19,7 +19,7 @@ passport.deserializeUser(async (id, done) => {
 
 const authUser = async (username: string, password: string, done: any) => {
   try {
-    const findUser = await user.findOne({username});
+    const findUser = await User.findOne({username});
     if (!findUser) throw new Error("User not found");
     if (!comparePassword(password, findUser.password))
       throw new Error("Password not correct");
