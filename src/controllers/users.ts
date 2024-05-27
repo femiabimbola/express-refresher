@@ -2,7 +2,7 @@ import {Request, Response, NextFunction, Router} from "express";
 import {mockUsers} from "../db/users";
 import {validationResult, matchedData} from "express-validator";
 import {hashPassword} from "../utils/helper";
-import {user} from "../db/schemas/usersSchema";
+import {User} from "../db/schemas/usersSchema";
 
 export const getUsersById = (req: Request, res: Response) => {
   const parseId = parseInt(req.params.id);
@@ -23,7 +23,7 @@ export const createUser = async (req: Request, res: Response) => {
   const data = matchedData(req); // the validated data from express data
 
   data.password = await hashPassword(data.password); //hashing the password
-  const newUser = new user(data); // creating the user mongoose model
+  const newUser = new User(data); // creating the user mongoose model
   try {
     const savedUser = await newUser.save(); // saving the user moder
     return res.status(201).send(savedUser);
